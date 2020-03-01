@@ -1,0 +1,109 @@
+/* Microchip Technology Inc. and its subsidiaries.  You may use this software 
+ * and any derivatives exclusively with Microchip products. 
+ * 
+ * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS".  NO WARRANTIES, WHETHER 
+ * EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED 
+ * WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A 
+ * PARTICULAR PURPOSE, OR ITS INTERACTION WITH MICROCHIP PRODUCTS, COMBINATION 
+ * WITH ANY OTHER PRODUCTS, OR USE IN ANY APPLICATION. 
+ *
+ * IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, 
+ * INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND 
+ * WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS 
+ * BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE 
+ * FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS 
+ * IN ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF 
+ * ANY, THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ *
+ * MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE OF THESE 
+ * TERMS. 
+ */
+
+/* 
+ * File:   
+ * Author: 
+ * Comments:
+ * Revision history: 
+ */
+
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef MAX_7219_PIC_H
+#define	MAX_7219_PIC_H
+
+#include "SPI_PICLIB.h"
+#define CS_PIN 0b00001000 //RA3
+#define MAX7219_MAX_DISPLAYs 8
+
+#define REG_DECODE_MAX7219 0x09
+#define REG_INTENSITY_MAX7219 0x0A
+#define REG_SCANLIMIT_MAX7219 0x0B
+#define REG_SHUTDOWN_MAX7219 0x0C
+#define REG_TEST_MAX7219 0x0F
+
+#define CMD_TEST 0x01
+#define CMD_NORMAL_MODE 0x01
+#define CMD_SHUTDOWN_MODE 0x00
+
+#define CMD_NO_DECODE_MODE 0x00
+#define CMD_ALL_DECODE_MODE 0xFF
+
+#define CMD_INTENSITY_100P 0x0F
+#define CMD_INTENSITY_50P 0x08
+#define CMD_INTENSITY_25P 0x04
+#define CMD_INTENSITY_1P 0x00
+
+#define CMD_SCAN_ALL 0x07
+#define CMD_NO_OP 0x00
+
+unsigned char *PORT_CS=0x00; //PORT for CS
+unsigned char PIN_CS=0x00; //PIN for CS 
+
+void Init_MAX7219(unsigned char const *port_cs, unsigned char const cs_pin_value);
+void Send_Data_MAX7219(unsigned char cmd,unsigned char data);
+void Shine_LEDs_MAX7219(unsigned char display, unsigned char data);
+
+void Init_MAX7219(unsigned char const *port_cs, unsigned char const cs_pin_value){
+    PORT_CS=port_cs;
+    PIN_CS=cs_pin_value;
+    
+    SPI_SET_CS(PORT_CS,PIN_CS,1);
+    
+    SPI_INIT();
+    
+    Send_Data_MAX7219(REG_TEST_MAX7219,CMD_TEST);
+    Send_Data_MAX7219(REG_SHUTDOWN_MAX7219,CMD_NORMAL_MODE);
+    Send_Data_MAX7219(REG_SCANLIMIT_MAX7219,CMD_SCAN_ALL);
+    Send_Data_MAX7219(REG_INTENSITY_MAX7219,CMD_INTENSITY_100P);
+    Send_Data_MAX7219(REG_DECODE_MAX7219,CMD_NO_DECODE_MODE);
+}
+
+void Send_Data_MAX7219(unsigned char cmd,unsigned char data){
+    SPI_SET_CS(PORT_CS,PIN_CS,0);
+    SPI_WRITE(cmd);
+    SPI_WRITE(data);
+    SPI_SET_CS(PORT_CS,PIN_CS,1);
+    
+    SPI_PAUSE(1000);
+}
+
+//Set DATA to display 1-7, 0 == NO_OP
+void Shine_LEDs_MAX7219(unsigned char display, unsigned char data){
+    if( data > MAX7219_MAX_DISPLAYs ) data=0x08;
+    
+    SPI_SET_CS(PORT_CS,PIN_CS,0);
+    SPI_WRITE(display);
+    SPI_WRITE(data);
+    SPI_SET_CS(PORT_CS,PIN_CS,1);  
+    SPI_PAUSE(1000);   
+}
+
+void Send_NO_OP(){
+    SPI_SET_CS(PORT_CS,PIN_CS,0);
+    SPI_WRITE(CMD_NO_OP);
+    SPI_SET_CS(PORT_CS,PIN_CS,1);
+    
+    SPI_PAUSE(1000);    
+}
+#endif	/* MAX_7219_PIC_H */
+
