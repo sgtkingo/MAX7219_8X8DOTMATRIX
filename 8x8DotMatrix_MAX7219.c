@@ -36,6 +36,7 @@ void main(void) {
     TestDevice();
  
     Init_MAX7219(&PORTA,CS_PIN);
+    ClearALL_MAX7219();
     delay_ms(1000);
     
     for(unsigned char disp=1;disp<=MAX7219_MAX_DISPLAYs;disp++){

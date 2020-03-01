@@ -60,9 +60,13 @@ unsigned char *PORT_CS=0x00; //PORT for CS
 unsigned char PIN_CS=0x00; //PIN for CS 
 
 void Init_MAX7219(unsigned char const *port_cs, unsigned char const cs_pin_value);
-void Test_MAX7219();
 void Send_Data_MAX7219(unsigned char cmd,unsigned char data);
 void Shine_LEDs_MAX7219(unsigned char display, unsigned char data);
+
+void Test_MAX7219();
+void ClearDisplay_MAX7219(unsigned char display);
+void ClearALL_MAX7219();
+
 void Shutdown_MAX7219(unsigned char mode);
 
 void Init_MAX7219(unsigned char const *port_cs, unsigned char const cs_pin_value){
@@ -116,6 +120,15 @@ void Test_MAX7219(){
 
 void Shutdown_MAX7219(unsigned char mode){
     Send_Data_MAX7219(REG_SHUTDOWN_MAX7219,mode);
+}
+
+void ClearDisplay_MAX7219(unsigned char display){
+    Shine_LEDs_MAX7219(display,0x00);
+}
+void ClearALL_MAX7219(){
+    for(unsigned char i=1;i<=MAX7219_MAX_DISPLAYs;i++){
+        ClearDisplay_MAX7219(i);
+    }
 }
 #endif	/* MAX_7219_PIC_H */
 
