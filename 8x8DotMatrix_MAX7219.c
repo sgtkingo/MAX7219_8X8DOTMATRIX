@@ -36,14 +36,14 @@ void main(void) {
     TestDevice();
  
     Init_MAX7219(&PORTA,CS_PIN);
-    delay_ms(5000);
+    delay_ms(1000);
     
     for(unsigned char disp=1;disp<=MAX7219_MAX_DISPLAYs;disp++){
-        for(unsigned char i=0;i<0xFF;i++){
-            Shine_LEDs_MAX7219(disp,i);
-            delay_ms(100);
-        }
-    } 
+        if(disp%2)Shine_LEDs_MAX7219(disp,0xAA);
+        else      Shine_LEDs_MAX7219(disp,0x55);
+        delay_ms(100);
+    }
+    //Shutdown_MAX7219(CMD_SHUTDOWN_MODE);
     
     LATD=0xFF;
     while(1){

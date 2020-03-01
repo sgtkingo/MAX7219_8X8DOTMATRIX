@@ -60,22 +60,23 @@ unsigned char *PORT_CS=0x00; //PORT for CS
 unsigned char PIN_CS=0x00; //PIN for CS 
 
 void Init_MAX7219(unsigned char const *port_cs, unsigned char const cs_pin_value);
+void Test_MAX7219();
 void Send_Data_MAX7219(unsigned char cmd,unsigned char data);
 void Shine_LEDs_MAX7219(unsigned char display, unsigned char data);
+void Shutdown_MAX7219(unsigned char mode);
 
 void Init_MAX7219(unsigned char const *port_cs, unsigned char const cs_pin_value){
     PORT_CS=port_cs;
     PIN_CS=cs_pin_value;
     
     SPI_SET_CS(PORT_CS,PIN_CS,1);
-    
     SPI_INIT();
     
-    Send_Data_MAX7219(REG_TEST_MAX7219,CMD_TEST);
-    Send_Data_MAX7219(REG_SHUTDOWN_MAX7219,CMD_NORMAL_MODE);
+    Test_MAX7219();
+    Send_Data_MAX7219(REG_INTENSITY_MAX7219,CMD_INTENSITY_50P);
     Send_Data_MAX7219(REG_SCANLIMIT_MAX7219,CMD_SCAN_ALL);
-    Send_Data_MAX7219(REG_INTENSITY_MAX7219,CMD_INTENSITY_100P);
     Send_Data_MAX7219(REG_DECODE_MAX7219,CMD_NO_DECODE_MODE);
+    Send_Data_MAX7219(REG_SHUTDOWN_MAX7219,CMD_NORMAL_MODE);
 }
 
 void Send_Data_MAX7219(unsigned char cmd,unsigned char data){
@@ -89,7 +90,7 @@ void Send_Data_MAX7219(unsigned char cmd,unsigned char data){
 
 //Set DATA to display 1-7, 0 == NO_OP
 void Shine_LEDs_MAX7219(unsigned char display, unsigned char data){
-    if( data > MAX7219_MAX_DISPLAYs ) data=0x08;
+    if( display > MAX7219_MAX_DISPLAYs ) data=0x08;
     
     SPI_SET_CS(PORT_CS,PIN_CS,0);
     SPI_WRITE(display);
@@ -101,9 +102,20 @@ void Shine_LEDs_MAX7219(unsigned char display, unsigned char data){
 void Send_NO_OP(){
     SPI_SET_CS(PORT_CS,PIN_CS,0);
     SPI_WRITE(CMD_NO_OP);
+    SPI_WRITE(0x00);
     SPI_SET_CS(PORT_CS,PIN_CS,1);
     
     SPI_PAUSE(1000);    
+}
+
+void Test_MAX7219(){
+    Send_Data_MAX7219(REG_TEST_MAX7219,CMD_TEST);
+    __delay_ms(500);
+    Send_Data_MAX7219(REG_TEST_MAX7219,0);
+}
+
+void Shutdown_MAX7219(unsigned char mode){
+    Send_Data_MAX7219(REG_SHUTDOWN_MAX7219,mode);
 }
 #endif	/* MAX_7219_PIC_H */
 
