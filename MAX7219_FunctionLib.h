@@ -32,7 +32,7 @@
 #define	MAX_7219_PIC_H
 
 #include "SPI_PICLIB.h"
-#define CS_PIN 0b00001000 //RA3
+#define CS_PIN 0b00000001 //RA0
 #define MAX7219_MAX_DISPLAYs 8
 
 #define REG_DECODE_MAX7219 0x09
@@ -68,6 +68,8 @@ void ClearDisplay_MAX7219(unsigned char display);
 void ClearALL_MAX7219();
 
 void Shutdown_MAX7219(unsigned char mode);
+
+void Print_Matrix_MAX7219(unsigned char *data);
 
 void Init_MAX7219(unsigned char const *port_cs, unsigned char const cs_pin_value){
     PORT_CS=port_cs;
@@ -110,6 +112,12 @@ void Send_NO_OP(){
     SPI_SET_CS(PORT_CS,PIN_CS,1);
     
     SPI_PAUSE(1000);    
+}
+
+void Print_Matrix_MAX7219(unsigned char *data){
+    for(unsigned char i=0;i<MAX7219_MAX_DISPLAYs;i++){
+        Shine_LEDs_MAX7219(i+1, data[i]);
+    }
 }
 
 void Test_MAX7219(){
