@@ -1,0 +1,102 @@
+/* Microchip Technology Inc. and its subsidiaries.  You may use this software 
+ * and any derivatives exclusively with Microchip products. 
+ * 
+ * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS".  NO WARRANTIES, WHETHER 
+ * EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED 
+ * WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A 
+ * PARTICULAR PURPOSE, OR ITS INTERACTION WITH MICROCHIP PRODUCTS, COMBINATION 
+ * WITH ANY OTHER PRODUCTS, OR USE IN ANY APPLICATION. 
+ *
+ * IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, 
+ * INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND 
+ * WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS 
+ * BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE 
+ * FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS 
+ * IN ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF 
+ * ANY, THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ *
+ * MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE OF THESE 
+ * TERMS. 
+ */
+
+/* 
+ * File:   
+ * Author: 
+ * Comments:
+ * Revision history: 
+ */
+
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef MAX7219_CHARSET_H
+#define	MAX7219_CHARSET_H
+
+#define MAX7219_MAX_DISPLAYs 8
+
+unsigned char* getNumber(unsigned char number);
+
+const unsigned char N_0[MAX7219_MAX_DISPLAYs]={
+    0b00000000,
+    0b00111000,
+    0b01000100,
+    0b01000100,
+    0b01000100,
+    0b01000100,
+    0b00111000,
+    0b00000000,
+};
+
+const unsigned char N_1[MAX7219_MAX_DISPLAYs]={
+    0b00000000,
+    0b00011000,
+    0b00101000,
+    0b00001000,
+    0b00001000,
+    0b00001000,
+    0b00011100,
+    0b00000000,
+};
+
+const unsigned char N_2[MAX7219_MAX_DISPLAYs]={
+    0b00000000,
+    0b00111000,
+    0b01000100,
+    0b00001000,
+    0b00010000,
+    0b00100000,
+    0b01111100,
+    0b00000000,
+};
+
+const unsigned char N_3[MAX7219_MAX_DISPLAYs]={
+    0b00000000,
+    0b00000000,
+    0b01110000,
+    0b00001000,
+    0b00110000,
+    0b00001000,
+    0b01110000,
+    0b00000000,
+};
+const unsigned char N_4[MAX7219_MAX_DISPLAYs]={
+    0b00001000,
+    0b00011000,
+    0b00101000,
+    0b01111100,
+    0b00001000,
+    0b00001000,
+    0b00011100,
+    0b00000000,
+};
+
+unsigned char *NUMBERS[9]={N_0,N_1,N_2,N_3,N_4,N_4,N_4,N_4,N_4};
+
+unsigned char* getNumber(unsigned char number){
+    if(number>-1 && number < 10){
+        return NUMBERS[number];
+    }
+    else return NUMBERS[0];
+}
+
+#endif	/* MAX7219_CHARSET_H */
+

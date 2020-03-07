@@ -1,7 +1,7 @@
 #include "PICF18LF46K22_ConfigSFR.h"
 #include "MAX7219_FunctionLib.h"
 
-unsigned char bit_image[MAX7219_MAX_DISPLAYs]={
+const unsigned char bit_image[MAX7219_MAX_DISPLAYs]={
     0b00011000,
     0b00100100,
     0b01000010,

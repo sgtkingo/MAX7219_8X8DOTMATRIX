@@ -20,10 +20,9 @@
  */
 
 /* 
- * File:   
- * Author: 
- * Comments:
- * Revision history: 
+ * Author: Jiri Konecny 
+ * Comments: Liblary for MAX7219
+ * Revision history: 1.0 / 070320
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -32,8 +31,9 @@
 #define	MAX_7219_PIC_H
 
 #include "SPI_PICLIB.h"
+#include "MAX7219_Charset.h"
+
 #define CS_PIN 0b00000001 //RA0
-#define MAX7219_MAX_DISPLAYs 8
 
 #define REG_DECODE_MAX7219 0x09
 #define REG_INTENSITY_MAX7219 0x0A
@@ -71,7 +71,7 @@ void Shutdown_MAX7219(unsigned char mode);
 
 void Print_Matrix_MAX7219(unsigned char *data);
 
-void Init_MAX7219(unsigned char const *port_cs, unsigned char const cs_pin_value){
+void Init_MAX7219(unsigned char *port_cs, unsigned char cs_pin_value){
     PORT_CS=port_cs;
     PIN_CS=cs_pin_value;
     
@@ -96,7 +96,7 @@ void Send_Data_MAX7219(unsigned char cmd,unsigned char data){
 
 //Set DATA to display 1-7, 0 == NO_OP
 void Shine_LEDs_MAX7219(unsigned char display, unsigned char data){
-    if( display > MAX7219_MAX_DISPLAYs ) data=0x08;
+    if( display > MAX7219_MAX_DISPLAYs ) display=0x08;
     
     SPI_SET_CS(PORT_CS,PIN_CS,0);
     SPI_WRITE(display);
