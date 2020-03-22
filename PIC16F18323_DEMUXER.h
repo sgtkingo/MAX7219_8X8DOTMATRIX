@@ -31,6 +31,7 @@
 #define	PIC16F18323_DEMUXER_H
 
 #include <xc.h>
+#define _XTAL_FREQ 16000000
 
 #define DMX_A LATEbits.RE0
 #define DMX_B LATEbits.RE1
@@ -38,6 +39,8 @@
 #define DMX_OV LATAbits.LA0
 
 #define DMX_OVERDRIVE 0xFF
+
+#define W8_TO_EXECUTE __delay_us(50)
 
 void Init_DEMUXER();
 void config_DEMUXER();
@@ -74,7 +77,7 @@ void Set_DEMUX(unsigned char device){
     if(device > 3 || device < 0)device=0;
     LATE&=0xFC; //Clear demux
     LATE|=device; //Set demux
-    __delay_us(25);
+    W8_TO_EXECUTE;
 }
 
 #endif	/* PIC16F18323_DEMUXER_H */
