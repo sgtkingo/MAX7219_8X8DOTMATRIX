@@ -100,7 +100,8 @@ const unsigned char NUMBERS[][MAX7219_MAX_DISPLAYs] = {
 //unsigned char *NUMBERS[9]={N_0,N_1,N_2,N_3,N_4,N_4,N_4,N_4,N_4};
 
 unsigned char* getNumber(unsigned char number){
-    if(number>-1 && number < 10){
+    NOP();
+    if(number >-1 && number < 10){
         return NUMBERS[number];
     }
     else return NUMBERS[0];

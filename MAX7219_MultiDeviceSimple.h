@@ -110,7 +110,7 @@ void Write_Data_MAX7219_MD(unsigned char cmd,unsigned char data){
     SPI_WRITE(data);
     Set_DEMUX(NON_MATRIX);
     
-    SPI_PAUSE(1000);    
+    SPI_PAUSE(500);    
 }
 
 //Set DATA to display 1-7, 0 == NO_OP
