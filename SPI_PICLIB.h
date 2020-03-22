@@ -98,7 +98,7 @@ void SPI_WRITE(unsigned char data){
 
 void SPI_MSSP(){
     SPI_Error=false;
-    char t=RESET_TIME;
+    int t=RESET_TIME;
     
     while(!SSPIF && t)t--;
     SSPIF=0;

@@ -1,5 +1,5 @@
 #include "PICF18LF46K22_ConfigSFR.h"
-#include "MAX7219_MultiDevice.h"
+#include "MAX7219_MultiDeviceSimple.h"
 
 const unsigned char bit_image_D1[MAX7219_MAX_DISPLAYs]={
     0b00011000,
@@ -48,11 +48,6 @@ void InitDevice(){
     ANSELD=0x00;
     TRISD=0x00;
     
-    //CS for 8x8LEDMATRIX
-    ANSELAbits.ANSA0=0;
-    TRISAbits.RA0=0;
-    PORTAbits.RA0=1;
-    
     //CS for MCP41100
     ANSELAbits.ANSA1=0;
     TRISAbits.RA1=0;
@@ -76,20 +71,17 @@ void main(void) {
     ClearDevice();
     TestDevice();
     
-    SPI_SET_CS(&PORTA,0b00000001,1); //RA0, 8x8LEDMATRIX
     SPI_SET_CS(&PORTA,0b00000010,1); //RA1, MCP41100
  
-    Inits_MAX7219_MD(&PORTA,CS_PIN,4);
+    Inits_MAX7219_MDS();
     Clear_ALL_MD();
     delay_ms(1000);
-    Print_Matrix_MAX7219_MD(getNumber(0), 0);
-    delay_ms(1000);
-    Print_Matrix_MAX7219_MD(getNumber(1), 1);
-    delay_ms(1000);
-    Print_Matrix_MAX7219_MD(getNumber(2), 2);
-    delay_ms(1000);
-    Print_Matrix_MAX7219_MD(getNumber(3), 3);
-    delay_ms(1000);
+    
+    Print_Matrix_MAX7219_MD(getNumber(0),0);
+    Print_Matrix_MAX7219_MD(getNumber(1),1);
+    Print_Matrix_MAX7219_MD(getNumber(2),2);
+    Print_Matrix_MAX7219_MD(getNumber(3),3);
+    
     LATD=0xFF;
     while(1){
         NOP();

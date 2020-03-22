@@ -27,13 +27,13 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef MAX_7219_MD_PIC_H
-#define	MAX_7219_MD_PIC_H
+#ifndef MAX_7219_MDS_PIC_H
+#define	MAX_7219_MDS_PIC_H
 
 #include "SPI_PICLIB.h"
 #include "MAX7219_Charset.h"
+#include "PIC16F18323_DEMUXER.h"
 
-#define CS_PIN 0b00000001 //RA0
 
 #define REG_DECODE_MAX7219 0x09
 #define REG_INTENSITY_MAX7219 0x0A
@@ -56,12 +56,13 @@
 #define CMD_SCAN_ALL 0x07
 #define CMD_NO_OP 0x00
 
-unsigned char *PORT_CS=0x00; //PORT for CS
-unsigned char PIN_CS=0x00; //PIN for CS 
-unsigned char N_MATRIX=0;
+#define N_MATRIX 4
+#define NON_MATRIX 0xFF
 
-void Init_MAX7219_MD(unsigned char const *port_cs, unsigned char const cs_pin_value, unsigned char n_devices);
-void Set_NO_OP(unsigned char device);
+unsigned char ACTUAL_MATRIX=0;
+
+void Inits_MAX7219_MDS();
+void selectMatrix(unsigned char matrix);
 
 void Write_Data_MAX7219_MD(unsigned char cmd,unsigned char data);
 void Send_Data_MAX7219_MD(unsigned char cmd,unsigned char data, unsigned char device);
@@ -73,19 +74,14 @@ void Clear_ALL_MD();
 void ClearDisplay_MAX7219_MD(unsigned char display, unsigned char device);
 void Clear_Matrix_MAX7219_MD(unsigned char device);
 
-void Lock_Device_MAX7219_MD(unsigned char device);
-void unLock_Device_MAX7219_MD(unsigned char device);
-
 void Shutdown_MAX7219_MD(unsigned char mode, unsigned char device);
 
 void Print_Matrix_MAX7219_MD(unsigned char *data, unsigned char device);
 
-void Inits_MAX7219_MD(unsigned char *port_cs, unsigned char cs_pin_value, unsigned char n_devices){
-    PORT_CS=port_cs;
-    PIN_CS=cs_pin_value;
-    N_MATRIX=n_devices;
-    
-    SPI_SET_CS(PORT_CS,PIN_CS,1);
+void Inits_MAX7219_MDS(){
+    ACTUAL_MATRIX=0;
+    Init_DEMUXER();
+
     SPI_INIT();
     
     for(unsigned char i=0;i<N_MATRIX;i++){
@@ -98,25 +94,23 @@ void Inits_MAX7219_MD(unsigned char *port_cs, unsigned char cs_pin_value, unsign
     }
 }
 
+void selectMatrix(unsigned char matrix){
+    if( matrix < 0 || matrix >= N_MATRIX )return;
+    ACTUAL_MATRIX=matrix;
+}
+
 void Send_Data_MAX7219_MD(unsigned char cmd,unsigned char data, unsigned char device){
-    if(device >= N_MATRIX || device < 0)device=0;
+    selectMatrix(device);
     Write_Data_MAX7219_MD(cmd,data);
-    Set_NO_OP(device);
 }
 
 void Write_Data_MAX7219_MD(unsigned char cmd,unsigned char data){
-    SPI_SET_CS(PORT_CS,PIN_CS,0);
+    Set_DEMUX(ACTUAL_MATRIX);
     SPI_WRITE(cmd);
     SPI_WRITE(data);
-    SPI_SET_CS(PORT_CS,PIN_CS,1);
+    Set_DEMUX(NON_MATRIX);
     
     SPI_PAUSE(1000);    
-}
-
-void Set_NO_OP(unsigned char device){
-    for(unsigned char i=0;i<device;i++){
-      Write_Data_MAX7219_MD(CMD_NO_OP,0x00);
-    }  
 }
 
 //Set DATA to display 1-7, 0 == NO_OP
@@ -143,14 +137,6 @@ void Test_MAX7219_MD(unsigned char device){
     Send_Data_MAX7219_MD(REG_TEST_MAX7219,0,device);
 }
 
-void Lock_Device_MAX7219_MD(unsigned char device){
-    Send_Data_MAX7219_MD(REG_TEST_MAX7219,CMD_TEST,device);
-}
-
-void unLock_Device_MAX7219_MD(unsigned char device){
-    Send_Data_MAX7219_MD(REG_TEST_MAX7219,0,device);
-}
-
 void Shutdown_MAX7219_MD(unsigned char mode, unsigned char device){
     Send_Data_MAX7219_MD(REG_SHUTDOWN_MAX7219,mode,device);
 }
@@ -168,5 +154,5 @@ void Clear_ALL_MD(){
         Clear_Matrix_MAX7219_MD(i);
     }
 }
-#endif	/* MAX_7219_MD_PIC_H */
+#endif	/* MAX_7219_MDS_PIC_H */
 

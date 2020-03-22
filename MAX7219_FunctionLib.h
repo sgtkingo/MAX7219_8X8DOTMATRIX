@@ -59,7 +59,7 @@
 unsigned char *PORT_CS=0x00; //PORT for CS
 unsigned char PIN_CS=0x00; //PIN for CS 
 
-void Init_MAX7219(unsigned char const *port_cs, unsigned char const cs_pin_value);
+void Init_MAX7219(unsigned char *port_cs, unsigned char cs_pin_value);
 void Send_Data_MAX7219(unsigned char cmd,unsigned char data);
 void Shine_LEDs_MAX7219(unsigned char display, unsigned char data);
 
