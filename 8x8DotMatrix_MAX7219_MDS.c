@@ -41,17 +41,6 @@ const unsigned char bit_image_D4[MAX7219_MAX_DISPLAYs]={
     0b00111100,
     0b00011001,
 };
-
-void drawNumber(unsigned int number){
-    unsigned char n=0;
-    int i=N_MATRIX-1;
-    
-    while(number > 0 && i >= 0){
-        n=(number%10);
-        number/=10;
-        Print_Matrix_MAX7219_MD(getNumber(n),i--);
-    }    
-}
 //declared init fce
 void InitDevice(){
     OSCCON=0b01111100; //osc setting, 16 MHz, internal by FOSCH
@@ -88,18 +77,11 @@ void main(void) {
     Clear_ALL_MD();
     delay_ms(1000);
     
-    /*Print_Matrix_MAX7219_MD(getNumber(0),0);
-    delay_ms(1000);
+    Print_Matrix_MAX7219_MD(getNumber(0),0);
     Print_Matrix_MAX7219_MD(getNumber(1),1);
-    delay_ms(1000);
     Print_Matrix_MAX7219_MD(getNumber(2),2);
-    delay_ms(1000);
     Print_Matrix_MAX7219_MD(getNumber(3),3);
-    delay_ms(1000);
-    Clear_ALL_MD();
-    delay_ms(1000);*/
-    Print_Matrix_MAX7219_MD(getNumber(2),2);
-    drawNumber(9876);
+    
     LATD=0xFF;
     while(1){
         NOP();
